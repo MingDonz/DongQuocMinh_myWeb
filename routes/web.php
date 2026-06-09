@@ -30,11 +30,15 @@ Route::get('/demo4/{id}', [DemoController::class, 'index4']);
 Route::get('/demo5/{id}', [DemoController::class, 'index5']);
 Route::get('/demo6/{id}', [DemoController::class, 'index6']);
 
-Route::resource('/admin/categories', CategoryController::class);
-Route::resource('/admin/brands', BrandController::class);
-Route::resource('/admin/products', ProductController::class);
-Route::resource('/admin/users', UserController::class);
-Route::resource('/admin/posts', PostController::class);
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('/admin/categories', CategoryController::class);
+    Route::resource('/admin/brands', BrandController::class);
+    Route::resource('/admin/products', ProductController::class);
+    Route::resource('/admin/users', UserController::class);
+    Route::resource('/admin/posts', PostController::class);
+});
 
 
 Route::get('/admin/dashboard', function () {

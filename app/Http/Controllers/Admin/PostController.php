@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -12,7 +13,21 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $list = DB::table('posts')
+        ->join('users', 'users.id', '=', 'posts.user_id')
+        ->select(
+        'posts.id',
+        'posts.title',
+        'posts.slug',
+        'posts.content',
+        'posts.image',
+        'posts.status',
+        'users.username'
+        )
+        ->orderBy('products.productname')
+        ->get();
+
+        return view('admin.posts.index', compact('list'));
     }
 
     /**

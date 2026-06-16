@@ -37,4 +37,9 @@
         </a>
     </tbody>
 </table>
+{{-- hiển thị phân trang --}}
+{{-- có thể custom trong slide lab7 --}}
+<div class="d-flex justify-content-center">
+    {{ $list->links() }}
+</div>
 @endsection

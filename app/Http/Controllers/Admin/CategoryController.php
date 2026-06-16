@@ -5,19 +5,26 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($limit=10)
     {
-        $list = DB::table('categories')
-            ->select('cateid', 'catename', 'slug', 'image', 'status')
-            ->where('status', 1)
-            ->orderBy('catename')
-            ->get();
+        // $list = DB::table('categories')
+        //     ->select('cateid', 'catename', 'slug', 'image', 'status')
+        //     ->where('status', 1)
+        //     ->orderBy('catename')
+        //     ->get();
+
+
+        //---ORM
+           $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
+           ->orderBy('catename')
+           ->paginate($limit);
 
         return view('admin.categories.index', compact('list'));
     }
@@ -36,9 +43,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        DB::table('categories')->insert([
+        Category::create([
             'catename' => $request->catename,
-            'slug' => $request->slug
+            'slug' => $request->slug,
+            'status' => $request->status
         ]);
         return redirect()->route('admin.categories.index');
     }

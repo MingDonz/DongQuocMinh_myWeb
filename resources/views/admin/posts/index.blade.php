@@ -30,9 +30,12 @@
                         <span class="badge bg-danger">Ẩn</span>
                     @endif
                 </td>
-                <td>{{ $item->username }}</td>
+                <td>{{ $item->user?->username }}</td>
             </tr>
         @endforeach
     </tbody>
 </table>
+<div class="d-flex justify-content-center">
+        {{ $list->links() }}
+    </div>
 @endsection

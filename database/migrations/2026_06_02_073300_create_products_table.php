@@ -15,28 +15,29 @@ return new class extends Migration
             $table->id();
             $table->string('productname', 150);
             $table->string('slug', 200)->unique();
-        
+
             // Giá - giá bán
             $table->decimal('price', 12, 2)->default(0);
-        
+
             // Giá - giá sau khi được giảm
             $table->decimal('pricediscount', 12, 2)->default(0);
-        
+
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->tinyInteger('status')->default(1);
-        
+
             $table->timestamps();
-        
+
             // khóa ngoại với bảng brands
+
             $table->foreignId('brandid')
                 ->nullable()
-                ->constrained('brands')
+                ->constrained('brands', 'id')
                 ->nullOnDelete();
-        
+
             // khóa ngoại với bảng categories
             $table->unsignedInteger('cateid');
-        
+
             $table->foreign('cateid')
                 ->references('cateid')
                 ->on('categories')

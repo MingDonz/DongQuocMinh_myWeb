@@ -32,8 +32,8 @@
         <a href="{{ route('admin.categories.create') }}" class="btn btn-success mb-3">
             + Thêm mới
         </a>
-        <a href="{{ route('admin.categories.destroy') }}" class="btn btn-success mb-3">
-            - Xóa sản phẩm
+        <a href="{{ route('admin.categories.destroy', $item->cateid) }}" class="btn btn-success mb-3">
+            - Xóa loại sản phẩm
         </a>
     </tbody>
 </table>

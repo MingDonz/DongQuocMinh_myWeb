@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Category;
+use Psy\Readline\Hoa\Console;
+
 // use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -12,7 +16,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($limit=10)
+    public function index($limit = 10)
     {
         // $list = DB::table('products')
         // ->join('categories', 'products.cateid', '=', 'categories.id')
@@ -57,6 +61,10 @@ class ProductController extends Controller
     public function create()
     {
         //
+        $categories = Category::select('cateid', 'catename')->get();
+        $brands = Brand::select('id', 'brandname')->get();
+
+        return view('admin.products.create', compact('categories', 'brands'));
     }
 
     /**
@@ -64,7 +72,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        Console.log($request->productname);
         //
+        Product::create([
+            'productname' => $request->productname,
+            'slug' => $request->slug,
+            'cateid' => $request->cateid,
+            'brandid' => $request->brandid,
+            'price' => $request->price,
+            'pricediscount' => $request->pricediscount,
+            'status' => $request->status,
+            'description' => $request->description,
+        ]);
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -81,6 +101,11 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         //
+        $product = Product::find($id);
+        $categories = Category::select('cateid', 'catename')->get();
+        $brands = Brand::select('id', 'brandname')->get();
+
+        return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
     /**
@@ -88,7 +113,43 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+
+            // Kiểm tra loại sản phẩm
+            if (empty($request->cateid)) {
+
+                return back()
+                    ->withInput()
+                    ->with('error', 'Vui lòng chọn loại sản phẩm');
+            }
+
+            $product = Product::find($id);
+
+            if (!$product) {
+                return redirect()
+                    ->route('admin.products.index')
+                    ->with('error', 'Sản phẩm không tồn tại');
+            }
+            // Thực hiện cập nhật sản phẩm
+            $product->update([
+                'productname' => $request->productname,
+                'cateid'      => $request->cateid,
+                'brandid'     => $request->brandid,
+                'price'       => $request->price,
+                'pricediscount' => $request->pricediscount,
+                'status'      => $request->status,
+                'description' => $request->description
+            ]);
+
+            return redirect()
+                ->route('admin.products.index')
+                ->with('success', 'Cập nhật sản phẩm thành công');
+        } catch (\Exception $e) {
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -99,11 +160,13 @@ class ProductController extends Controller
         //
     }
 
-    public function test1(){
+    public function test1()
+    {
         return redirect()->route('admin.home');
     }
 
-    public function test2(){
+    public function test2()
+    {
         return redirect()->route('admin.dashboard');
     }
 }

@@ -17,7 +17,7 @@
             </a>
         </li>
         {{-- Menu expand --}}
-        <li class="nav-item">
+        <li   li class="nav-item">
             <a class="nav-link text-white" data-bs-toggle="collapse" href="#categoryMenu">
                 <i class="bi bi-tags"></i>
                 Quản lý danh mục
@@ -27,27 +27,32 @@
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.categories.index') }}">
-                            Loại Sản phẩm
+                            Danh sách loại Sản phẩm
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            Danh sách loại sản phẩm
+                    <!-- <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.categories.create') }}">
+                            Thêm loại Sản phẩm
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            Thêm loại sản phẩm
-                        </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="#">
-                <i class="bi bi-box-seam"></i>
-                Sản phẩm
+        <li li class="nav-item">
+        <a class="nav-link text-white" data-bs-toggle="collapse" href="#productMenu">
+                <i class="bi bi-tags"></i>
+                Quản lý sản phẩm
+                <i class="bi bi-chevron-down float-end"></i>
             </a>
+
+            <div class="collapse" id="productMenu">
+                <ul class="nav flex-column ms-3">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.products.index') }}">
+                            Danh sách Sản phẩm
+                        </a>
+                </ul>
+            </div>
         </li>
     </ul>
 </div>

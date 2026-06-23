@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Category;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index($limit=10)
+    public function index($limit = 10)
     {
         // $list = DB::table('categories')
         //     ->select('cateid', 'catename', 'slug', 'image', 'status')
@@ -22,9 +23,9 @@ class CategoryController extends Controller
 
 
         //---ORM
-           $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
-           ->orderBy('catename')
-           ->paginate($limit);
+        $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
+            ->orderBy('catename')
+            ->paginate($limit);
 
         return view('admin.categories.index', compact('list'));
     }
@@ -43,12 +44,52 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        Category::create([
-            'catename' => $request->catename,
-            'slug' => $request->slug,
-            'status' => $request->status
-        ]);
-        return redirect()->route('admin.categories.index');
+        $request->validate(
+            // Parram 1: Rules - khai báo các quy tắc kiểm tra dữ liệu
+            [
+                'catename' => 'required|min:3|max:100|unique:categories,catename',
+                'slug' => [
+                    'required',
+                    'min:5',
+                    'max:150',
+                    'unique:categories,slug',
+                    'regex:/^[a-z0-9-]+$/'
+                ],
+                'status' => 'required|in:0,1'
+            ],
+            // Parram 2: Messages - tùy chỉnh nội dung thông báo lỗi.
+            [
+                'required' => ':attribute không được để trống.',
+                'min' => ':attribute phải từ :min ký tự trở lên.',
+                'max' => ':attribute không vượt quá :max ký tự.',
+                'unique' => ':attribute đã tồn tại.',
+                'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
+                'status.in' => ':attribute không hợp lệ.'
+            ],
+            // Parram 3: Attributes- tên hiển thị của các trường
+            [
+                'catename' => 'Tên loại',
+                'slug' => 'Đường dẫn (Slug)',
+                'status' => 'Trạng thái'
+            ]
+        );
+
+        try {
+
+            Category::create([
+                'catename' => $request->catename,
+                'slug' => $request->slug,
+                'status' => $request->status
+            ]);
+
+            return redirect()->route('admin.categories.index')
+                ->with('success', 'Thêm loại sản phẩm thành công');
+        } catch (\Exception $e) {
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -75,7 +116,57 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        return "nội dung tùy ý";
+        $request->validate(
+            // Parram 1: Rules - khai báo các quy tắc kiểm tra dữ liệu
+            [
+                'catename' => 'required|min:3|max:100|unique:categories,catename,' . $id . ',cateid',
+                'slug' => [
+                    'required',
+                    'min:5',
+                    'max:150',
+                    'unique:categories,slug',
+                    'regex:/^[a-z0-9-]+$/',
+                    Rule::unique('categories', 'slug')->ignore($id, 'cateid'),
+                ],
+                'status' => 'required|in:0,1'
+            ],
+            // Parram 2: Messages - tùy chỉnh nội dung thông báo lỗi.
+            [
+                'required' => ':attribute không được để trống.',
+                'min' => ':attribute phải từ :min ký tự trở lên.',
+                'max' => ':attribute không vượt quá :max ký tự.',
+                'unique' => ':attribute đã tồn tại.',
+                'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
+                'status.in' => ':attribute không hợp lệ.'
+            ],
+            // Parram 3: Attributes- tên hiển thị của các trường
+            [
+                'catename' => 'Tên loại',
+                'slug' => 'Đường dẫn (Slug)',
+                'status' => 'Trạng thái'
+            ]
+        );
+
+        try {
+            // Tìm category theo id
+            $category = Category::findOrFail($id);
+            // Cập nhật dữ liệu
+            $category->update([
+                'catename'    => $request->catename,
+                'slug'        => $request->slug,
+                'status'      => $request->status,
+                'description' => $request->description,
+            ]);
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Cập nhật thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Cập nhật thất bại.');
+        }
     }
 
     /**

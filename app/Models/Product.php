@@ -12,7 +12,7 @@ protected $table = 'products';
 // protected $primaryKey = 'id';
 
 protected $fillable = [
-    'proname',
+    'productname',
     'cateid',
     'brandid',
     'slug',

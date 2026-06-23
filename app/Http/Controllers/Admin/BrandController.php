@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Brand;
+use App\Http\Requests\Admin\BrandRequest;
 
 class BrandController extends Controller
 {
@@ -14,12 +16,12 @@ class BrandController extends Controller
     public function index()
     {
         $list = DB::table('brands')
-        ->select('id', 'brandname', 'slug', 'image', 'status')
-        ->where('status', 1)
-        ->orderBy('brandname')
-        ->get();
+            ->select('id', 'brandname', 'slug', 'image', 'status')
+            ->where('status', 1)
+            ->orderBy('brandname')
+            ->get();
 
-    return view('admin.brands.index', compact('list'));
+        return view('admin.brands.index', compact('list'));
     }
 
     /**
@@ -33,9 +35,26 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BrandRequest $request)
     {
         //
+        try {
+            Brand::create([
+                'brandname'   => $request->brandname,
+                'slug'        => $request->slug,
+                'status'      => $request->status,
+                'description' => $request->description,
+            ]);
+
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'Thêm thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Thêm thất bại.');
+        }
     }
 
     /**
@@ -57,9 +76,28 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(BrandRequest $request, string $id)
     {
-        //
+        try {
+
+            $brand = Brand::findOrFail($id);
+
+            $brand->update([
+                'brandname'   => $request->brandname,
+                'slug'        => $request->slug,
+                'status'      => $request->status,
+                'description' => $request->description,
+            ]);
+
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'Cập nhật thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Cập nhật thất bại.');
+        }
     }
 
     /**

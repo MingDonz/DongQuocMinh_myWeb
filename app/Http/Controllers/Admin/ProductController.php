@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
-use Psy\Readline\Hoa\Console;
+use App\Http\Requests\Admin\ProductRequest;
+use Illuminate\Support\Facades\DB;
 
 // use Illuminate\Support\Facades\DB;
 
@@ -70,21 +71,30 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        Console.log($request->productname);
-        //
-        Product::create([
-            'productname' => $request->productname,
-            'slug' => $request->slug,
-            'cateid' => $request->cateid,
-            'brandid' => $request->brandid,
-            'price' => $request->price,
-            'pricediscount' => $request->pricediscount,
-            'status' => $request->status,
-            'description' => $request->description,
-        ]);
-        return redirect()->route('admin.products.index');
+        try {
+
+            Product::create([
+                'productname' => $request->productname,
+                'slug' => $request->slug,
+                'cateid' => $request->cateid,
+                'brandid' => $request->brandid,
+                'price' => $request->price,
+                'pricediscount' => $request->pricediscount,
+                'status' => $request->status,
+                'description' => $request->description,
+            ]);
+
+            return redirect()
+                ->route('admin.products.index')
+                ->with('success', 'Thêm sản phẩm thành công');
+        } catch (\Exception $e) {
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -158,6 +168,12 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
+        echo('Xóa sản phẩm có id=');
+        echo($id);
+        Product::destroy($id);
+        // DB::table('products')->delete($id);
+        return redirect()->route('admin.products.index')
+        ->with('success', 'Xóa sản phẩm thành công');
     }
 
     public function test1()

@@ -70,7 +70,9 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 # php artisan serve
 
 # Chạy migration
+# DB_DATABASE=2124110316_mydb
 # cmd: php artisan migrate
 # cmd: php artisan migrate:fresh
 # cmd: php artisan migrate:refresh
 # chạy từng file thì ->  php artisan migrate --path=/database/migrations/2026_06_02_073300_create_products_table.php
+# chạy seeder

@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +35,31 @@ Route::get('/demo6/{id}', [DemoController::class, 'index6']);
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
+
+    // Authentication
+    Route::get('/login', [AuthController::class, 'login'])
+        ->name('login');
+    Route::post('/login', [AuthController::class, 'postLogin'])
+        ->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+    Route::get('/forgotpass', [AuthController::class, 'forgotPassword'])
+        ->name('forgotpass');
+    Route::post('/forgotpass', [AuthController::class, 'postforgotPassword'])
+        ->name('forgotpass.post');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])
+            ->name('logout');
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
+        // CRUD - Resource route
+        Route::resource('categories', CategoryController::class);
+        // ……
+    });
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
     Route::resource('/admin/categories', CategoryController::class);
     Route::resource('/admin/brands', BrandController::class);
     Route::resource('/admin/products', ProductController::class);

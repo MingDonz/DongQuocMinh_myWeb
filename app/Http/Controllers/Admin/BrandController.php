@@ -22,8 +22,8 @@ class BrandController extends Controller
             ->where('status', 1)
             ->orderBy('brandname')
             ->get();
-
-        return view('admin.brands.index', compact('list'));
+        $trashCount = Brand::onlyTrashed()->count();
+        return view('admin.brands.index', compact('list', 'trashCount'));
     }
 
     /**
@@ -132,11 +132,77 @@ class BrandController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        try {
+            Brand::findOrFail($id)->delete();
+
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'Xóa thương hiệu thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại.');
+        }
+    }
+
+    public function trash($limit = 10)
+    {
+        $list = Brand::onlyTrashed()
+            ->select('id', 'brandname', 'slug', 'image', 'status', 'deleted_at')
+            ->orderBy('deleted_at', 'desc')
+            ->paginate($limit);
+        $trashCount = Brand::onlyTrashed()->count();
+
+        return view('admin.brands.trash', compact('list', 'trashCount'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            Brand::onlyTrashed()->findOrFail($id)->restore();
+
+            return redirect()
+                ->route('admin.brands.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Khôi phục thất bại.');
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            Brand::onlyTrashed()->findOrFail($id)->forceDelete();
+
+            return redirect()
+                ->route('admin.brands.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Xóa thất bại.');
+        }
+    }
+
+    public function restoreAll()
+    {
+        Brand::onlyTrashed()->restore();
+
+        return redirect()
+            ->route('admin.brands.trash')
+            ->with('success', 'Khôi phục tất cả thành công.');
+    }
+
+    public function forceDeleteAll()
+    {
+        Brand::onlyTrashed()->forceDelete();
+
+        return redirect()
+            ->route('admin.brands.trash')
+            ->with('success', 'Xóa vĩnh viễn tất cả thành công.');
     }
 }

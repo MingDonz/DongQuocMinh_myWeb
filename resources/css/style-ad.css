@@ -1,0 +1,24 @@
+.table td:last-child {
+    white-space: nowrap;
+    width: 1%;
+}
+
+.table .action-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: nowrap;
+}
+
+.table .action-buttons .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+}
+
+.table .action-buttons form {
+    display: inline-flex;
+    margin: 0;
+}

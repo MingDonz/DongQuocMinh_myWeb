@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
     // chỉ định tên bảng trong database
     // (có thể bỏ qua khai báo $table nếu đặt theo nguyên tắc số nhiều)
     protected $table = 'categories';

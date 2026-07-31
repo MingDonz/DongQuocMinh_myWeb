@@ -12,20 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title',200);
-            $table->string('slug',255)->unique();
-            $table->text('content');
-            $table->string('image',200);
+            $table->id();
+            $table->string('title', 200);
+            $table->string('slug', 255)->unique();
+            $table->text('content')->nullable();
+            $table->string('image')->nullable();
             $table->tinyInteger('status')->default(1);
-            $table->bigInteger('user_id');
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->restrictOnDelete();
-                
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

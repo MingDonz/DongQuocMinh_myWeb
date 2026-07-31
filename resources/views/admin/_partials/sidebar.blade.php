@@ -4,85 +4,57 @@
         Admin
     </h4>
     <ul class="nav flex-column">
+        {{-- Cách 1: Dùng Route Name --}}
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.home') }}">
+            <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-house-door"></i>
                 Dashboard
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white" href="/admin/dashboard">
-                <i class="bi bi-house-door"></i>
-                Dashboard**
+            <a class="nav-link text-white" href="{{ route('admin.change-password') }}">
+                <i class="bi bi-key"></i> Đổi mật khẩu
             </a>
         </li>
         {{-- Menu expand --}}
-        <li li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link text-white" data-bs-toggle="collapse" href="#categoryMenu">
                 <i class="bi bi-tags"></i>
-                Quản lý danh mục
+                Quản lý
                 <i class="bi bi-chevron-down float-end"></i>
             </a>
             <div class="collapse" id="categoryMenu">
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.categories.index') }}">
-                            Danh sách loại Sản phẩm
+                            <i class="bi bi-list"></i> Loại Sản Phẩm
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.categories.create') }}">
-                            Thêm loại Sản phẩm
-                        </a>
-                    </li> -->
-                </ul>
-            </div>
-        </li>
-        <li li class="nav-item">
-            <a class="nav-link text-white" data-bs-toggle="collapse" href="#brandMenu">
-                <i class="bi bi-tags"></i>
-                Quản lý thương hiệu
-                <i class="bi bi-chevron-down float-end"></i>
-            </a>
-            <div class="collapse" id="brandMenu">
-                <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.brands.index') }}">
-                            Danh sách thương hiệu
+                            <i class="bi bi-bookmark"></i> Thương hiệu
                         </a>
                     </li>
-                </ul>
-            </div>
-        </li>
-        <li li class="nav-item">
-            <a class="nav-link text-white" data-bs-toggle="collapse" href="#productMenu">
-                <i class="bi bi-tags"></i>
-                Quản lý sản phẩm
-                <i class="bi bi-chevron-down float-end"></i>
-            </a>
-
-            <div class="collapse" id="productMenu">
-                <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.products.index') }}">
-                            Danh sách Sản phẩm
+                            <i class="bi bi-box-seam"></i> Sản phẩm
                         </a>
-                </ul>
-            </div>
-        </li>
-        <li li class="nav-item">
-            <a class="nav-link text-white" data-bs-toggle="collapse" href="#postMenu">
-                <i class="bi bi-tags"></i>
-                Quản lý bài viết
-                <i class="bi bi-chevron-down float-end"></i>
-            </a>
-
-            <div class="collapse" id="postMenu">
-                <ul class="nav flex-column ms-3">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.users.index') }}">
+                            <i class="bi bi-people"></i> Người dùng
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('admin.posts.index') }}">
-                            Danh sách bài viết
+                            <i class="bi bi-newspaper"></i> Bài viết
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.orders.index') }}">
+                            <i class="bi bi-receipt"></i> Đơn hàng
+                        </a>
+                    </li>
                 </ul>
             </div>
         </li>

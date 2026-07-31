@@ -26,8 +26,9 @@ class CategoryController extends Controller
         $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
             ->orderBy('catename')
             ->paginate($limit);
+        $trashCount = Category::onlyTrashed()->count();
 
-        return view('admin.categories.index', compact('list'));
+        return view('admin.categories.index', compact('list', 'trashCount'));
     }
 
     /**
@@ -174,7 +175,74 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        DB::table('categories')->delete($id);
-        return redirect()->route('admin.categories.index');
+        try {
+            Category::findOrFail($id)->delete();
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Xóa thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại.');
+        }
+    }
+    // hiển thị danh sách categories đã xóa (trash)
+    public function trash($limit = 10)
+    {
+        $list = Category::onlyTrashed()
+            ->select('cateid', 'catename', 'slug', 'image', 'status', 'deleted_at')
+            ->orderBy('deleted_at', 'desc')
+            ->paginate($limit);
+
+        $trashCount = Category::onlyTrashed()->count();
+
+        return view('admin.categories.trash', compact('list', 'trashCount'));
+    }
+
+    // khôi phục dữ liệu đã xóa
+    public function restore($id)
+    {
+        try {
+            Category::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Khôi phục thất bại.');
+        }
+    }
+    // xóa vĩnh viễn
+    public function forceDelete($id)
+    {
+        try {
+            Category::onlyTrashed()->findOrFail($id)->forceDelete();
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Xóa thất bại.');
+        }
+    }
+
+    public function restoreAll()
+    {
+        Category::onlyTrashed()->restore();
+
+        return redirect()
+            ->route('admin.categories.trash')
+            ->with('success', 'Khôi phục tất cả thành công.');
+    }
+
+    public function forceDeleteAll()
+    {
+        Category::onlyTrashed()->forceDelete();
+
+        return redirect()
+            ->route('admin.categories.trash')
+            ->with('success', 'Xóa vĩnh viễn tất cả thành công.');
     }
 }

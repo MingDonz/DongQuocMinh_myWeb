@@ -1,0 +1,5 @@
+/* Import Bootstrap từ node_modules */
+@import "bootstrap/dist/css/bootstrap.min.css";
+/* Import file CSS tự viết */
+/* . : thư mục hiện tại (resources/css) */
+@import "./style-ad.css";
